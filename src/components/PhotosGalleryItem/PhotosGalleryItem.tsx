@@ -4,7 +4,7 @@ import styles from "./PhotosGalleryItem.module.css";
 
 interface PhotosGalleryItemProp {
   photo: Photo;
-  onSelect: (photo: Photo | null) => void;
+  onSelect: (photo: Photo) => void;
 }
 
 export default function PhotosGalleryItem({
