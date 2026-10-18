@@ -24,4 +24,7 @@ export const createPost = async (newPost) => {};
 
 export const editPost = async (newDataPost) => {};
 
-export const deletePost = async (postId) => {};
+export const deletePost = async (postId: number): Promise<Post> => {
+  const { data } = await axios.delete<Post>(`/posts/${postId}`);
+  return data;
+};
