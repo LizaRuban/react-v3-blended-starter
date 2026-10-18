@@ -53,7 +53,10 @@ export const deletePost = async (postId: number) => {
   return response.data;
 };
 
-export const fetchPostById = async () => {};
+export const fetchPostById = async (id: number): Promise<Post> => {
+  const response = await axios.get<Post>(`/posts/${id}`);
+  return response.data;
+};
 
 export const fetchUsers = async (): Promise<User[]> => {
   const response = await axios.get<User[]>('/users');
