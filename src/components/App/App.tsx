@@ -8,11 +8,16 @@ import Pagination from "../Pagination/Pagination";
 import css from "./App.module.css";
 import { fetchPosts } from "../../services/postService";
 import { useState } from "react";
+import Modal from "../Modal/Modal";
+import PostForm from "../CreatePostForm/CreatePostForm";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreatePost, setIsCreatePost] = useState(false);
+  const [isEditPost, setIsEditPost] = useState(false);
 
   const { data } = useQuery({
     queryKey: ["posts", debouncedSearchQuery, currentPage],
@@ -33,9 +38,27 @@ export default function App() {
             onPageChange={setCurrentPage}
           />
         )}
-        <button className={css.button}>Create post</button>
+        <button className={css.button} onClick={() => setIsModalOpen(true)}>
+          Create post
+        </button>
       </header>
-      {/* <Modal>Передати через children компонент CreatePostForm або EditPostForm</Modal> */}
+      {isModalOpen && (
+        <Modal
+          onClose={() => {
+            setIsModalOpen(false);
+            setIsCreatePost(true);
+          }}
+        >
+          {isCreatePost && (
+            <PostForm
+              onClose={() => {
+                setIsCreatePost(false);
+                setIsModalOpen(false);
+              }}
+            />
+          )}
+        </Modal>
+      )}
       {data && data.posts.length > 0 && <PostList posts={data.posts} />}
     </div>
   );

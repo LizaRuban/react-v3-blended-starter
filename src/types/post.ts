@@ -3,3 +3,8 @@ export interface Post {
   title: string;
   body: string;
 }
+
+export interface NewPostProps {
+  title: string;
+  body: string;
+}
