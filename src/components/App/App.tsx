@@ -2,7 +2,6 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import PostList from "../PostList/PostList";
 import SearchBox from "../SearchBox/SearchBox";
 import { useDebounce } from "use-debounce";
-// import Modal from "../Modal/Modal";
 import Pagination from "../Pagination/Pagination";
 
 import css from "./App.module.css";
@@ -17,7 +16,6 @@ export default function App() {
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreatePost, setIsCreatePost] = useState(false);
-  const [isEditPost, setIsEditPost] = useState(false);
 
   const { data } = useQuery({
     queryKey: ["posts", debouncedSearchQuery, currentPage],

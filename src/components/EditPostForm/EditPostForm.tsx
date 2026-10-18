@@ -1,11 +1,55 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Yup from "yup";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 
+import type { Post, NewPostProps } from "../../types/post";
+import { editPost } from "../../services/postService";
 import css from "./EditPostForm.module.css";
 
-export default function EditPostForm() {
+interface EditPostFormProps {
+  post: Post;
+  onClose: () => void;
+}
+
+export default function EditPostForm({ post, onClose }: EditPostFormProps) {
+  const queryClient = useQueryClient();
+
+  const postSchema = Yup.object({
+    title: Yup.string()
+      .min(3, "At least 3 characters")
+      .max(50, "No more than 50 characters")
+      .required("Title is required"),
+    body: Yup.string().max(500, "No more than 500 characters").required("Content is required"),
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: editPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      alert("Post edited successfully!");
+      onClose();
+    },
+  });
+
+  const initialValues: NewPostProps = {
+    title: post.title,
+    body: post.body,
+  };
+
+  const handleSubmit = (values: NewPostProps) => {
+    mutate({
+      postId: Number(post.id),
+      newDataPost: values,
+    });
+  };
+
   return (
-    <Formik initialValues={} onSubmit={} validationSchema={}>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={postSchema}
+      enableReinitialize
+    >
       <Form className={css.form}>
         <div className={css.formGroup}>
           <label htmlFor="title">Title</label>
@@ -20,11 +64,12 @@ export default function EditPostForm() {
         </div>
 
         <div className={css.actions}>
-          <button type="button" className={css.cancelButton}>
+          <button type="button" className={css.cancelButton} onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" className={css.submitButton} disabled={}>
-            Edit post
+
+          <button type="submit" className={css.submitButton} disabled={isPending}>
+            {isPending ? "Saving..." : "Edit post"}
           </button>
         </div>
       </Form>
